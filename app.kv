@@ -1,6 +1,7 @@
 ScreenManager:
     PocketApi:
     Parameters:
+    Edit:
 
 
 <PocketApi>:
@@ -62,3 +63,79 @@ ScreenManager:
         ScrollView:
             MDList:
                 id: parameters
+
+
+<Edit>:
+    name: 'edit'
+    MDBoxLayout:
+        orientation: 'vertical'
+        pos_hint: {"center_x": .5, "top": 1}
+        size_hint_y: 1
+        MDTopAppBar:
+            pos_hint: {"top": 1}
+            title: 'Edit'
+            elevation: 10
+            right_action_items: [["content-save", lambda x: app.edit_data()]]
+            left_action_items: [["keyboard-backspace", lambda x: app.set_screen('parameters')]]
+        ScrollView:
+            id: scroll
+            CodeInput:
+                id: code_input
+                size_hint: 1, None
+                height: max(self.minimum_height, scroll.height)
+
+
+        
+<PortDialogContent>:
+    orientation: 'vertical'
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+    MDTextField:
+        id: portNumber
+        input_filter: "int"
+        max_text_length: 5
+        required: True
+        error: True
+        helper_text_mode: "on_error"
+        helper_text: "Choose a port between 1024 and 65535"
+        hint_text: "Choose your port"
+        text: str(app.dict.get('port'))
+
+<Check@MDCheckbox>:
+    group: 'group'
+    size_hint: None, None
+    size: dp(48), dp(48)
+
+
+<ChooseTheme>:
+    size_hint_y: None
+    height: "60dp"
+    MDLabel:
+        halign: "center"
+        text: "Light"
+        pos_hint: {"center_y": .5}
+    Check:
+        active: True
+        pos_hint: {"center_y": .5} 
+        on_active: app.light_mode()
+    MDLabel:
+        halign: "center"
+        text: "Dark"
+        pos_hint: {"center_y": .5}   
+    Check:
+        pos_hint: {"center_y": .5}
+        on_active: app.dark_mode()
+
+<DownloadApi>:
+    orientation: 'vertical'
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+    MDTextField:
+        id: urlEntry
+        required: True
+        error: True
+        helper_text_mode: "on_error"
+        helper_text: "This field is required"
+        hint_text: "Insert an url"
