@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI
 import uvicorn 
 import json
@@ -11,4 +12,6 @@ app = FastAPI()
 async def yo():
     return dict
 
-uvicorn.run(app, port=5555)
+
+    
+uvicorn.run(app, port = 5555)

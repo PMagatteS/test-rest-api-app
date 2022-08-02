@@ -133,6 +133,11 @@ ScreenManager:
     size_hint_y: None
     height: "120dp"
     MDTextField:
+        id: fileName
+        helper_text_mode: "on_focus"
+        helper_text: "Default name data.json"
+        hint_text: "Insert a name"
+    MDTextField:
         id: urlEntry
         required: True
         error: True
