@@ -10,15 +10,18 @@ ScreenManager:
         orientation: 'vertical'
         pos_hint: {"center_x": .5, "top": 1}
         size_hint_y: 0.5
+        spacing: "10dp"
         MDTopAppBar:
             title: 'Pocket api'
             elevation: 10
             right_action_items: [["cog", lambda x: app.set_screen('parameters')]]
         MDCard:
+            padding: 16
             orientation: "vertical"
-            size_hint_y: 0.5
+            size_hint: .9, .9
+            elevation: 20
+            line_color: (0.2, 0.2, 0.2, 0.1)
             pos_hint: {"center_x": .5, "center_y": .5}
-            md_bg_color: 0,0,1,1
             MDGridLayout:           
                 pos_hint: {"top": 1}
                 size_hint_y: 0.3
@@ -30,24 +33,24 @@ ScreenManager:
                     text: "local:"
                     halign: 'left'
                 MDLabel:
-                    size_hint_y: .1
                     id: "local:"
+                    size_hint_y: .1
                     halign: 'center'
                 MDLabel:
                     size_hint_y: .1
                     text: "network:"
                     halign: 'left'
                 MDLabel:
-                    size_hint_y: .1
-                    text: "fjkdjfvjlfjnjff"
                     id: "network:"
+                    size_hint_y: .1
                     halign: 'center'
             MDRelativeLayout:
                 size_hint_x: 1
-                MDFlatButton:
+                MDRectangleFlatButton:
+                    id: api_button
                     pos_hint:{"center_x": 0.5, "center_y": 0.3}
                     text: "run server"
-                    md_bg_color: 1,0,1,1
+                    on_press: app.run_api()
 
 
 
@@ -116,7 +119,7 @@ ScreenManager:
         text: "Light"
         pos_hint: {"center_y": .5}
     Check:
-        active: True
+        id: checkLight
         pos_hint: {"center_y": .5} 
         on_active: app.light_mode()
     MDLabel:
@@ -124,6 +127,7 @@ ScreenManager:
         text: "Dark"
         pos_hint: {"center_y": .5}   
     Check:
+        id: checkDark
         pos_hint: {"center_y": .5}
         on_active: app.dark_mode()
 

@@ -1,4 +1,5 @@
 import json
+import threading
 import requests
 from kivymd.app import MDApp
 from kivy.core.window import Window
@@ -9,9 +10,9 @@ from kivymd.uix.boxlayout import BoxLayout
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.filemanager import MDFileManager
-from fastapi import FastAPI
-import uvicorn 
-import threading
+import socket
+import datetime
+
 
 Window.size = (360, 600)
 class PocketApi(Screen):
@@ -57,8 +58,13 @@ class PocketApiApp(MDApp):
             self.dialog.dismiss()
 
     def set_theme(self, obj):
+        theme = self.theme_cls.theme_style
         self.dialog = MDDialog(text= 'Port', type= 'custom', content_cls = ChooseTheme(),
                                     buttons= [MDFlatButton(text= 'ok', on_release=self.close_dialog)],)
+        if theme == 'Light':
+            self.dialog.content_cls.ids.checkLight.active =True
+        else:
+            self.dialog.content_cls.ids.checkDark.active = True
         self.dialog.open()
     
 
@@ -67,6 +73,7 @@ class PocketApiApp(MDApp):
 
     def dark_mode(self):
         self.theme_cls.theme_style = "Dark"
+
 
     def load_file(self, obj):
         path = '/'
@@ -100,15 +107,37 @@ class PocketApiApp(MDApp):
         self.exit_manager()
         self.close_dialog(self)
    
-    def run_api(self, obj):
-        # to do
-        app = FastAPI()
+    def create_api(self):
+        sock = socket.socket(
+            socket.AF_INET,
+            socket.SOCK_STREAM)
+        sock.bind(('', self.dict['port']))
 
-        @app.get('/')
-        async def yo():
-            return self.dict
-        # a= threading.Thread(target= lambda: uvicorn.run(app, port = 5555)).run()
+        while self.running:
+            data = json.dumps(self.dict['data'])
+            date = datetime.datetime.today()
+            headers = f'HTTP/1.1 200 OK\r\nDate: {date}\r\nServer: pocket-api socket server\r\nContent-Type: application/json; charset = utf-8\r\n\r\n{data}'.encode('Utf8')
+            sock.listen(5)
+            client, addr= sock.accept()
+            client.recv(4096)
+            client.send(headers)
+            client.close()
 
+    def run_api(self):
+        self.running = True
+        self.thread = threading.Thread(target=self.create_api, daemon=True)
+        self.thread.start()
+        screen = self.root.get_screen('pocket-api')
+        self.button = screen.ids.api_button
+        self.button.text = 'stop server'
+        self.button.on_release = self.stop_api
+
+
+    def stop_api(self):
+        self.running = False
+        self.thread.join(timeout= 2.0)
+        self.button.text = 'run server'
+        self.button.on_release = self.run_api
 
     
 
@@ -146,11 +175,11 @@ class PocketApiApp(MDApp):
         editscreen = self.root.get_screen('edit')
         new_data = editscreen.ids.code_input.text
         try:
-            self.dict['data'] = json.loads(new_data)
+            self.dict['data']= json.loads(new_data)
+            self.root.current = 'pocket-api'
         except Exception as e:
             MDDialog(text= f'Warning json format is not valid: {e}').open()
-            self.dict['data'] = new_data
-            self.root.current = 'pocket-api'
+            return
 
     def on_start(self):
         parameters_list = {'Select theme': self.set_theme, 'Set port': self.choose_port, 'Edit data': self.edit_screen, 'Download an API': self.download_api, 'Load file': self.load_file, 'run': self.run_api}
