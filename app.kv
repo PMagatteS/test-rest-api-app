@@ -27,23 +27,28 @@ ScreenManager:
                 size_hint_y: 0.3
                 rows: 2
                 cols: 2
+                spacing: "10dp"
                 padding: "10dp"
                 MDLabel:
                     size_hint_y: .1
                     text: "local:"
                     halign: 'left'
+                    font_size: '15sp'
                 MDLabel:
-                    id: "local:"
+                    id: local
                     size_hint_y: .1
-                    halign: 'center'
+                    halign: 'left'
+                    font_size: '15sp'
                 MDLabel:
                     size_hint_y: .1
                     text: "network:"
                     halign: 'left'
+                    font_size: '15sp'
                 MDLabel:
-                    id: "network:"
+                    id: network
                     size_hint_y: .1
-                    halign: 'center'
+                    halign: 'left'
+                    font_size: '15sp'
             MDRelativeLayout:
                 size_hint_x: 1
                 MDRectangleFlatButton:
